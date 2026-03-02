@@ -1,0 +1,53 @@
+# GenAI Configuration for Digital Tour Guide (Aizu 🤖) 🏖️⛰️
+# This configuration file contains settings for the RAG-based tour guide system
+
+# Model Cache Configuration
+model_cache:
+  enabled: true
+  cache_dir: "D:\\models"  # Cache directory for downloaded models
+  hub_cache: "D:\\models\\hub"
+  transformers_cache: "D:\\models\\transformers"
+  
+# LLM Configuration
+llm_model: "microsoft/Phi-3.5-mini-instruct"
+llm_config:
+  max_length: 1000
+  temperature: 0.2
+  top_p: 0.8
+
+# Embedding Configuration
+embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+
+# Vector Database Configuration (Qdrant)
+qdrant_url: "http://localhost:6333"
+collection_name: "tour-guides"
+collection_config:
+  distance: "cosine"  # Distance metric: cosine, euclidean, manhattan
+  replicate_number: 1
+  shard_number: 1
+
+# RAG Pipeline Configuration
+rag_config:
+  top_k: 3           # Number of documents to retrieve
+  min_similarity: 0.3  # Minimum similarity score for results
+  use_reranker: false  # Enable re-ranking of results
+
+# Application Configuration
+app_config:
+  host: "0.0.0.0"
+  port: 5000
+  workers: 1
+  log_level: "INFO"
+  
+# System Prompts
+system_prompt_file: "src/holiday.txt"
+
+# URL Maps:
+url_maps: "https://www.google.com/maps/?hl=en"
+  
+# API Configuration
+api_config:
+  title: "Aizu - Digital Tour Guide"
+  description: "AI-powered travel guide using GenAI technology"
+  version: "1.0.0"
+  debug: false

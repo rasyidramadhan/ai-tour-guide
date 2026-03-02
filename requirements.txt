@@ -1,0 +1,34 @@
+# GenAI Application Requirements
+
+# UI Framework
+streamlit
+
+# API Framework
+fastapi
+uvicorn[standard]
+pydantic
+
+# LLM & Embeddings
+transformers
+langchain
+langchain-community
+langchain-huggingface
+sentence-transformers
+torch
+accelerate
+
+# Vector Database
+qdrant-client
+
+# Graph & Workflow
+langgraph
+
+# Web Crawling (for Hotel Service)
+selenium
+webdriver-manager
+
+# Utilities
+pyyaml
+python-dotenv
+requests
+
