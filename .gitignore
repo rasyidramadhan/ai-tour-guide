@@ -1,0 +1,55 @@
+# ==========================================
+# Python & Bytecode
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ==========================================
+# Virtual Environments (uv / pip)
+# ==========================================
+venv/
+.venv/
+env/
+ENV/
+
+# ==========================================
+# Environment Variables & Secrets (SANGAT PENTING!)
+# ==========================================
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# ==========================================
+# Logs & Application Outputs
+# ==========================================
+# Mengabaikan folder output tempat Anda menyimpan log JSON pencarian/booking
+output/
+logs/
+*.log
+
+# ==========================================
+# Database & Docker Volumes
+# ==========================================
+qdrant_storage/
+
+# ==========================================
+# IDEs & Editor
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
