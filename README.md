@@ -20,6 +20,7 @@ Aizu is a GenAI application that provides intelligent travel recommendations and
 │   ├── engine.py           # LLM and embedding model initialization
 │   ├── rag.py              # RAG pipeline implementation
 │   ├── docs.py             # Document repository Qdrant integration
+│   ├── crawl.py            # Crawling to google maps for destination/hotels
 │   └── tour.txt            # System prompt for the tour guide
 │   ├── agent.py            # Travel agent initialization
 │   ├── hotel_service.py    # Hotel booking initialization
