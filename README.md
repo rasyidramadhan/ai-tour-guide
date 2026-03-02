@@ -55,9 +55,10 @@ python -m venv venv
 source venv/bin/activate  # Linux/Mac
 ```
 
-### 3. Install Dependencies
+### 3. Install Dependencies using uv
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
+uv sync
 ```
 
 ### 4. Setup Environment Variables
@@ -217,11 +218,6 @@ Format dan Display Results:
 | check_time | hour, time, now | `get_current_time()` | Current time |
 | chat | (anything else) | RAG Knowledge Base | General answer |
 
-### Implementation Files
-- `src/llm_agent.py`: Main LLMAgent class with intent detection & calling tools
-- `src/tools.py`: HotelBookingTools & TimeService to execute operations
-- `test_llm_agent.py`: Test suite with various scenarios
-
 
 ## System Prompt
 
@@ -239,7 +235,7 @@ The system prompt (`src/holiday.txt`) defines the behavior and personality of Ai
 
 ### Overview
 
-HotelService is an integrated module that allows users to search for holiday destinations based on their calendar and make hotel reservations. This module uses `WebCrawler` from `app/crawl.py` to search for destination information in various provinces in Indonesia.
+HotelService is an integrated module that allows users to search for holiday destinations based on their calendar and make hotel reservations. This module uses `WebCrawler` from `src/crawl.py` to search for destination information in various provinces in Indonesia.
 
 ### Features
 
