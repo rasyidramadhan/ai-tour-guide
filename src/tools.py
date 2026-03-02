@@ -100,20 +100,26 @@ class HotelBookingTools:
         self.hotel_service = hotel_service
         self.time_service = TimeService()
 
-    def search_destinations(self, location: str, start_date: str, end_date: str, destination_type: str) -> Dict[str, Any]:
+    def search_destinations(self, location: str, start_date: str = None, end_date: str = None, destination_type: str = "tempat wisata") -> Dict[str, Any]:
         try:
             logger.info(f"Searching destinations: {destination_type} in {location} from {start_date} to {end_date}")
-            
-            validation = self.time_service.validate_date_range(start_date, end_date)
-            if not validation["valid"]:
-                return {
-                    "success": False,
-                    "message": validation["message"],
-                    "destinations": []
-                }
+            duration_days = 0
+
+            if start_date and end_date:
+                validation = self.time_service.validate_date_range(start_date, end_date)
+                if not validation.get("valid", False):
+                    return {
+                        "success": False,
+                        "message": validation.get("message", "Format tanggal tidak valid"),
+                        "destinations": []
+                    }
+                duration_days = validation.get("duration_days", 0)
+            else:
+                logger.info("Tanggal kosong (None), melewati validasi time_service.")
             
             dates = {"start_date": start_date, "end_date": end_date}
             preferences = {"type": destination_type}
+            
             destinations = self.hotel_service.search_destinations_by_date(
                 dates=dates,
                 preferences=preferences,
@@ -121,35 +127,34 @@ class HotelBookingTools:
             )
             
             if destinations:
-                destination_list = [d["destination"] for d in destinations]
+                destination_list = [d.get("destination", d) if isinstance(d, dict) else d for d in destinations]
                 return {
                     "success": True,
                     "message": f"Menemukan {len(destination_list)} destinasi untuk {destination_type} di {location}",
                     "destinations": destination_list,
                     "location": location,
-                    "start_date": start_date,
-                    "end_date": end_date,
-                    "duration_days": validation["duration_days"],
+                    "start_date": start_date if start_date else "Kapan saja",
+                    "end_date": end_date if end_date else "Kapan saja",
+                    "duration_days": duration_days,
                     "total_found": len(destination_list)
                 }
             else:
                 return {
                     "success": False,
-                    "message": f"Tidak menemukan destinasi {destination_type} untuk tanggal tersebut",
+                    "message": f"Tidak menemukan destinasi {destination_type} di {location}",
                     "destinations": [],
-                    "start_date": start_date,
-                    "end_date": end_date
+                    "start_date": start_date if start_date else "Kapan saja",
+                    "end_date": end_date if end_date else "Kapan saja"
                 }
         
         except Exception as e:
-            logger.error(f"Error searching destinations: {e}")
+            logger.error(f"Error searching destinations: {e}", exc_info=True)
             return {
                 "success": False,
                 "message": f"Error: {str(e)}",
                 "error": str(e),
                 "destinations": []
             }
-
     def search_hotels(self, location: str, start_date: str = None, end_date: str = None) -> Dict[str, Any]:
         try:
             logger.info(f"Searching hotels in {location}: {start_date} to {end_date}")

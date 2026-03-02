@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from src.tools import HotelBookingTools, TimeService
 from src.hotel_service import HotelService
-from app.crawl import WebCrawler
+from src.crawl import WebCrawler
 
 
 logger = logging.getLogger(__name__)

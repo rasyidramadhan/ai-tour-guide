@@ -3,7 +3,7 @@ import random
 import string
 from datetime import datetime
 from typing import List, Dict, Optional
-from app.crawl import WebCrawler
+from src.crawl import WebCrawler
 
 logger = logging.getLogger(__name__)
 
@@ -69,9 +69,12 @@ class HotelService:
         if not self.check_user_calendar(dates):
             return []
 
-        search_provinces = self.provinces
-        destinations = []
+        if location and location.strip():
+            search_provinces = [location.strip()]
+        else:
+            search_provinces = self.provinces
 
+        destinations = []
         for province in search_provinces:
             logger.info(f"Searching for destinations in {province}...")
 

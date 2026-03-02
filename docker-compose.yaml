@@ -1,6 +1,9 @@
+name: aizu
+
 services:
   qdrant:
     image: qdrant/qdrant:latest
+    container_name: aizu-qdrant
     ports:
       - "6333:6333"
     volumes:
@@ -9,15 +12,17 @@ services:
       - QDRANT_API_KEY=${QDRANT_API_KEY:-}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:6333/readyz || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 15s
 
   aizu-app:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
+    container_name: aizu-app
     ports:
       - "8501:8501"
     depends_on:
@@ -26,6 +31,7 @@ services:
     volumes:
       - .:/app
       - /app/__pycache__
+      - /app/.venv
       - /app/.streamlit
     environment:
       - QDRANT_URL=http://qdrant:6333
@@ -37,12 +43,13 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 30s
     stdin_open: true
     tty: true
 
 volumes:
   qdrant_storage:
-    driver: local
+    name: aizu_qdrant_storage
 
 networks:
   default:
