@@ -320,53 +320,52 @@ class TravelAgent:
                     else:
                         end_date = start_date + timedelta(days=3)
                 
-                logger.info(f"Tanggal spesifik ditemukan: {start_date} sampai {end_date}")
+                logger.info(f"Specific date found: {start_date} to {end_date}")
                 return {
                     "start_date": start_date.strftime("%d-%m-%Y"), 
                     "end_date": end_date.strftime("%d-%m-%Y")
                 }
             
+            relative_offsets = []
+            
             if "sekarang" in query_lower or "hari ini" in query_lower:
-                start = today
-                
-                if "minggu depan" in query_lower:
-                    end = start + timedelta(days=7)
-                else:
-                    end = start + timedelta(days=3)
-                    
-                return {"start_date": start.strftime("%d-%m-%Y"), "end_date": end.strftime("%d-%m-%Y")}
-            
-            if "tahun depan" in query_lower:
-                start = today + timedelta(days=365)
-                end = start + timedelta(days=10)
-                return {"start_date": start.strftime("%d-%m-%Y"), "end_date": end.strftime("%d-%m-%Y")}
-            
-            if "minggu depan" in query_lower:
-                start = today + timedelta(days=7)
-                end = start + timedelta(days=10)
-                return {"start_date": start.strftime("%d-%m-%Y"), "end_date": end.strftime("%d-%m-%Y")}
-            
-            if "bulan depan" in query_lower:
-                start = today + timedelta(days=30)
-                end = start + timedelta(days=33)
-                return {"start_date": start.strftime("%d-%m-%Y"), "end_date": end.strftime("%d-%m-%Y")}
-                
-            if "lusa" in query_lower:
-                start = today + timedelta(days=2)
-                end = start + timedelta(days=5)
-                return {"start_date": start.strftime("%d-%m-%Y"), "end_date": end.strftime("%d-%m-%Y")}
-            
+                relative_offsets.append(0)
             if "besok" in query_lower:
-                start = today + timedelta(days=1)
-                end = start + timedelta(days=3)
-                return {"start_date": start.strftime("%d-%m-%Y"), "end_date": end.strftime("%d-%m-%Y")}
+                relative_offsets.append(1)
+            if "lusa" in query_lower:
+                relative_offsets.append(2)
+            if "minggu depan" in query_lower:
+                relative_offsets.append(7)
+            if "bulan depan" in query_lower:
+                relative_offsets.append(30)
+            if "tahun depan" in query_lower:
+                relative_offsets.append(365)
+            
+            if relative_offsets:
+                relative_offsets.sort()
+                start_date = today + timedelta(days=relative_offsets[0])
+                
+                if len(relative_offsets) > 1:
+                    end_date = today + timedelta(days=relative_offsets[-1])
+                else:
+                    days_match = re.search(r"(\d+)\s*(?:hari|malam)", query_lower)
+                    if days_match:
+                        end_date = start_date + timedelta(days=int(days_match.group(1)))
+                    else:
+                        end_date = start_date + timedelta(days=3)
+                
+                logger.info(f"Relative time combination found: {start_date} to {end_date}")
+                return {
+                    "start_date": start_date.strftime("%d-%m-%Y"), 
+                    "end_date": end_date.strftime("%d-%m-%Y")
+                }
             
             days_match = re.search(r"(\d+)\s*(?:hari|malam)", query_lower)
             if days_match:
                 duration = int(days_match.group(1))
-                start = today + timedelta(days=1)
-                end = start + timedelta(days=duration)
-                return {"start_date": start.strftime("%d-%m-%Y"), "end_date": end.strftime("%d-%m-%Y")}
+                start_date = today + timedelta(days=1)
+                end_date = start_date + timedelta(days=duration)
+                return {"start_date": start_date.strftime("%d-%m-%Y"), "end_date": end_date.strftime("%d-%m-%Y")}
             
             return None
             
@@ -474,22 +473,24 @@ class TravelAgent:
                 return result
             
             elif intent == "search_destinations":
-                dates = self._extract_dates_from_query("")
-                if not dates:
-                    return {"success": False, "error": "Tanggal liburan tidak jelas"}
+                query = entities.get("query", "")
+                dates = self._extract_dates_from_query(query)
                 
                 location = entities.get("location", "")
                 dest_type = entities.get("destination_type", "destinasi wisata")
                 
                 if not location:
-                    return {"success": False, "error": "Lokasi destinasi tidak ditemukan. Coba sebutkan nama kotanya."}
+                    return {"success": False, "error": "Lokasi destinasi tidak ditemukan. Coba sebutkan nama Provinsinya."}
 
                 logger.info(f"Initiating web crawl for destinations in {location}")
                 
+                start_date = dates["start_date"] if dates else None
+                end_date = dates["end_date"] if dates else None
+                
                 result = self.hotel_tools.search_destinations(
                     location=location,
-                    start_date=dates["start_date"],
-                    end_date=dates["end_date"],
+                    start_date=start_date,
+                    end_date=end_date,
                     destination_type=dest_type
                 )
                 return result
@@ -515,7 +516,7 @@ class TravelAgent:
                 dates = self._extract_dates_from_query(query)
                 
                 if not location:
-                    return {"success": False, "error": "Mohon sebutkan lokasi hotel. Contoh: 'Pesan hotel di Lombok'"}
+                    return {"success": False, "error": "Mohon sebutkan lokasi hotel. Contoh: 'Pesan hotel di Yogyakarta'"}
                 
                 if not dates:
                     return {"success": False, "error": "Tanggal booking tidak jelas"}

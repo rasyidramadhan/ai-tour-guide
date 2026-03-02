@@ -148,7 +148,7 @@ col1, col2, col3, col4 = st.columns([4, 0.8, 0.8, 0.8])
 with col1:
     user_input = st.text_input(
         "💬 Tanyakan sesuatu...",
-        placeholder="Contoh: Pesan hotel di Lombok untuk 3 hari",
+        placeholder="Contoh: Pesan hotel di Yogyakarta untuk minggu depan",
         label_visibility="collapsed",
         key="user_input"
     )

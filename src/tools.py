@@ -95,7 +95,6 @@ class TimeService:
                 "error": str(e)
             }
 
-
 class HotelBookingTools:
     def __init__(self, hotel_service: HotelService):
         self.hotel_service = hotel_service

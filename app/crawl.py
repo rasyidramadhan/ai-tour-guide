@@ -81,7 +81,7 @@ class WebCrawler:
                     EC.presence_of_element_located((By.CLASS_NAME, 'hfpxzc'))
                 )
             except Exception as e:
-                logger.warning(f"Waktu tunggu kartu habis atau lambat: {e}")
+                logger.warning(f"Card timeout or slow: {e}")
             
             time.sleep(2)
 
@@ -99,7 +99,7 @@ class WebCrawler:
                 if current_count >= self.max_results:
                     break
                 if current_count == 0:
-                    logger.warning("Data benar-benar kosong dari Google Maps.")
+                    logger.warning("Data is completely empty from Google Maps.")
                     break
 
                 self.driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", result_el)
@@ -129,7 +129,7 @@ class WebCrawler:
             return results
 
         except Exception as e:
-            logger.error(f"Error saat mengekstrak hasil: {e}", exc_info=True)
+            logger.error(f"Error while extracting results: {e}", exc_info=True)
             return results
 
     def _format_result(self, text: str, city: str) -> Optional[str]:

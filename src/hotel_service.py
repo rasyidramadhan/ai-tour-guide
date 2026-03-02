@@ -29,26 +29,32 @@ class HotelService:
 
     def check_user_calendar(self, user_dates: Dict) -> bool:
         try:
-            if not user_dates.get("start_date") or not user_dates.get("end_date"):
-                logger.info("Pencarian fleksibel (tanpa tanggal spesifik).")
+            start_val = user_dates.get("start_date")
+            end_val = user_dates.get("end_date")
+
+            if start_val is None or end_val is None:
                 return True
 
-            start_date = datetime.strptime(user_dates["start_date"], "%d-%m-%Y")
-            end_date = datetime.strptime(user_dates["end_date"], "%d-%m-%Y")
+            start_date = datetime.strptime(str(start_val), "%d-%m-%Y")
+            end_date = datetime.strptime(str(end_val), "%d-%m-%Y")
 
             if start_date >= end_date:
-                logger.warning("Tanggal akhir harus lebih besar dari tanggal mulai")
+                logger.warning("End date must be greater than start date")
                 return False
 
             if start_date.date() < datetime.now().date():
-                logger.warning("Tanggal harus di masa depan")
+                logger.warning("Date must be in the future")
                 return False
 
-            logger.info(f"✅ Kalender tervalidasi: {start_date.date()} - {end_date.date()}")
+            logger.info(f"✅ Calender valid: {start_date.date()} - {end_date.date()}")
             return True
 
         except Exception as e:
-            logger.error(f"Error validasi tanggal: {e}", exc_info=True)
+            logger.error(f"Date validation error: {e}")
+            return True
+        
+        except Exception as e:
+            logger.error(f"Date validation error: {e}", exc_info=True)
             return False
 
     def search_destinations_by_date(
@@ -67,7 +73,7 @@ class HotelService:
         destinations = []
 
         for province in search_provinces:
-            logger.info(f"Mencari destinasi di {province}...")
+            logger.info(f"Searching for destinations in {province}...")
 
             try:
                 dest_type = preferences.get("type", "hotel") if preferences else "hotel"
@@ -90,16 +96,16 @@ class HotelService:
                     logger.info(f"✅ {len(results)} ditemukan di {province}")
 
             except Exception as e:
-                logger.warning(f"Error di {province}: {e}")
+                logger.warning(f"Error on {province}: {e}")
 
-        logger.info(f"📍 Total destinasi ditemukan: {len(destinations)}")
+        logger.info(f"📍 Total destinations found: {len(destinations)}")
         return destinations
 
     def search_hotels(self, location: str, dates: Dict) -> Dict:
         if not self.check_user_calendar(dates):
             return {"error": "Tanggal tidak valid"}
 
-        logger.info(f"Mencari hotel di {location}...")
+        logger.info(f"Searching for hotels in {location}...")
 
         results = self.crawler.search_holiday_destinations(
             city=location,
@@ -117,7 +123,7 @@ class HotelService:
         }
 
     def execute_booking(self, booking_details: Dict) -> Dict:
-        logger.info(f"Memproses booking untuk {booking_details.get('hotel_name')}...")
+        logger.info(f"Processing bookings for {booking_details.get('hotel_name')}...")
 
         try:
             if not self.user_payment_info:
@@ -156,12 +162,12 @@ class HotelService:
             }
 
     def get_booking_recommendations(self, budget: float, preferences: Dict) -> List[Dict]:
-        logger.info(f"Mencari rekomendasi dengan budget {budget}")
+        logger.info(f"Looking for recommendations on a budget {budget}")
         return []
 
     def update_payment_info(self, payment_info: Dict):
         self.user_payment_info = payment_info
-        logger.info(f"💳 Informasi pembayaran berhasil diperbarui")
+        logger.info(f"💳 Payment information updated successfully")
 
     def close_crawler(self):
         if self.crawler:

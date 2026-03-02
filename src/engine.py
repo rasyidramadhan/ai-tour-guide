@@ -38,7 +38,7 @@ def create_prompt_template(system_prompt: str) -> PromptTemplate:
     Konteks dari dokumen:
     {{context}}
 
-    Query user: {{query}}
+    Pertanyaan user: {{query}}
 
     Jawaban:"""
         
