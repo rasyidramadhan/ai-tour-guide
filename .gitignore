@@ -9,10 +9,13 @@ __pycache__/
 # ==========================================
 # Virtual Environments (uv / pip)
 # ==========================================
-venv/
-.venv/
-env/
 ENV/
+
+venv/
+env/
+__pycache__/
+*.pyc
+.env
 
 # ==========================================
 # Environment Variables & Secrets (SANGAT PENTING!)
