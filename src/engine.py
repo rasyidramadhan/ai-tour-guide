@@ -21,7 +21,6 @@ def initialize_models(llm_model_name: str) -> Tuple[HuggingFacePipeline, Sentenc
         "temperature": load_config(["llm_config", "temperature"]),
         "top_p": load_config(["llm_config", "top_p"]),
         "repetition_penalty": load_config(["llm_config", "repetition_penalty"]),
-        "do_sample": load_config(["llm_config", "do_sample"])
     }
     
     text_pipeline = pipeline(**pipeline_kwargs)

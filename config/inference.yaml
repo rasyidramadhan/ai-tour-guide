@@ -11,11 +11,10 @@ model_cache:
 # LLM Configuration
 llm_model: "microsoft/Phi-3.5-mini-instruct"
 llm_config:
-  max_length: 512
+  max_length: 1000
   temperature: 0.2
   top_p: 0.85
   repetition_penalty: 1.1
-  do_sample: true
   
 # Embedding Configuration
 embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
