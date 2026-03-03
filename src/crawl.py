@@ -8,12 +8,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 
 from src.loader import load_config
 
 logger = logging.getLogger(__name__)
-
 
 class WebCrawler:
     def __init__(self, headless=True, max_results=10):
@@ -27,8 +25,12 @@ class WebCrawler:
         options.add_argument("--start-maximized")
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1920,1080")
+        options.binary_location = "/usr/bin/chromium"
+        service = Service("/usr/bin/chromedriver")
 
-        service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=service, options=options)
 
     def crawl(self, destination: str, city: str) -> List[str]:

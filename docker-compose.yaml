@@ -1,5 +1,4 @@
 name: aizu
-
 services:
   qdrant:
     image: qdrant/qdrant:latest
@@ -11,13 +10,6 @@ services:
     environment:
       - QDRANT_API_KEY=${QDRANT_API_KEY:-}
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:6333/readyz || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-
   aizu-app:
     build:
       context: .
@@ -26,8 +18,7 @@ services:
     ports:
       - "8501:8501"
     depends_on:
-      qdrant:
-        condition: service_healthy
+      - qdrant
     volumes:
       - .:/app
       - /app/__pycache__
@@ -37,6 +28,7 @@ services:
       - QDRANT_URL=http://qdrant:6333
       - PYTHONUNBUFFERED=1
       - TZ=Asia/Jakarta
+      - HF_HOME=/app/hf_cache
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]

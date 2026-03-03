@@ -16,7 +16,7 @@ env/
 __pycache__/
 *.pyc
 .env
-
+hf_cache/
 # ==========================================
 # Environment Variables & Secrets (SANGAT PENTING!)
 # ==========================================
