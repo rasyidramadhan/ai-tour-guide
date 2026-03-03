@@ -1,5 +1,6 @@
 import time
 import logging
+import platform
 from typing import List, Dict, Optional
 
 from selenium import webdriver
@@ -8,7 +9,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from webdriver_manager.chrome import ChromeDriverManager
 from src.loader import load_config
 
 logger = logging.getLogger(__name__)
@@ -28,10 +29,14 @@ class WebCrawler:
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1920,1080")
-        options.binary_location = "/usr/bin/chromium"
-        service = Service("/usr/bin/chromedriver")
 
-        self.driver = webdriver.Chrome(service=service, options=options)
+        if platform.system() == "Linux":
+            options.binary_location = "/usr/bin/chromium"
+            service = Service("/usr/bin/chromedriver")
+            self.driver = webdriver.Chrome(service=service, options=options)
+        else:
+            service = Service(ChromeDriverManager().install())
+            self.driver = webdriver.Chrome(service=service, options=options)
 
     def crawl(self, destination: str, city: str) -> List[str]:
         url = load_config(["url_maps"])
