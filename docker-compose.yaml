@@ -21,7 +21,7 @@ services:
   aizu-app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     container_name: aizu-app
     ports:
       - "8501:8501"
